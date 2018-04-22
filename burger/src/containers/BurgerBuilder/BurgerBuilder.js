@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 
-import Aux from '../../hoc/Aux';
+import Aux from '../../hoc/Hoc';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import axios from "../../axios";
 
 const INGREDIENT_PRICES = {
     salad: 0.5,
@@ -30,6 +31,18 @@ class BurgerBuilder extends Component {
         purchasing: false
     }
 
+    // Get default purchase from service
+    getDefaultIngredients(){
+        axios.get("/ingredients.json")
+        .then(response=>{
+            this.setState({
+                ingredients:response.data
+            });
+        })
+        .catch(error=>{
+            console.log(error);
+        })
+    }
     updatePurchaseState (ingredients) {
         const sum = Object.keys( ingredients )
             .map( igKey => {
@@ -79,9 +92,29 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-        alert('You continue!');
+        // axios.post("/order.json",this.state.ingredients)
+        // .then(response=>{
+        //     console.log(response);
+        // })
+        // .catch(error=>{
+        //     console.log(error);
+        // })
+
+        const queryParam = [];
+        for(let i in this.state.ingredients){
+            queryParam.push(i+"="+encodeURIComponent(this.state.ingredients[i]));
+        }
+        
+        this.props.history.push({
+            pathname: "/checkout",
+            search: '?'+queryParam.join('&')
+        });
     }
 
+    componentDidMount(){
+        console.log(this.props)
+        this.getDefaultIngredients();
+    }
     render () {
         const disabledInfo = {
             ...this.state.ingredients
@@ -89,6 +122,7 @@ class BurgerBuilder extends Component {
         for ( let key in disabledInfo ) {
             disabledInfo[key] = disabledInfo[key] <= 0
         }
+        
         // {salad: true, meat: false, ...}
         return (
             <Aux>

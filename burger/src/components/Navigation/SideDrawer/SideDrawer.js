@@ -3,7 +3,7 @@ import classes from "./SideDrawer.css";
 import Logo from "../../Logo/Logo";
 import Items from "../Items/Items";
 import Backdrop from "../../UI/Backdrop/Backdrop";
-import Aux from "../../../hoc/Aux";
+import Aux from "../../../hoc/Hoc";
 const sideDrawer = (props) => {
     let sideDrawerClasses = [classes.SideDrawer, classes.Closed];
     if(props.show){
